@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Logo from "../assets/NF.png";
@@ -7,18 +7,34 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (email && password) {
       login(email, password);
-      navigate("/user");
+      if (user && user.role === "admin") {
+        navigate("/admin");
+      } else if (user && user.role === "user") {
+        navigate("/user");
+      } else {
+        setError("Invalid credentials");
+      }
     } else {
       setError("Please enter both email and password");
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      if (user.role === "admin") {
+        navigate("/admin");
+      } else if (user.role === "user") {
+        navigate("/user");
+      }
+    }
+  }, [user, navigate]);
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -70,42 +86,12 @@ const LoginForm = () => {
                 />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
-              <div className="flex items-center justify-between">
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <input
-                      id="remember"
-                      aria-describedby="remember"
-                      type="checkbox"
-                      className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary/70 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary dark:ring-offset-gray-800"
-                      required
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label
-                      htmlFor="remember"
-                      className="text-gray-500 dark:text-gray-300"
-                    >
-                      Remember me
-                    </label>
-                  </div>
-                </div>
-                <span className="text-sm font-medium text-primary hover:underline dark:text-primary/80">
-                  Forgot password?
-                </span>
-              </div>
               <button
                 type="submit"
                 className="w-full text-white bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary/70 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary/80"
               >
                 Sign in
               </button>
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don’t have an account yet?{" "}
-                <span className="font-medium text-primary hover:underline dark:text-primary/80 cursor-pointer">
-                  Sign up
-                </span>
-              </p>
             </form>
           </div>
         </div>

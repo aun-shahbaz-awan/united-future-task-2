@@ -1,112 +1,88 @@
-// src/components/UserManager.js
 import React, { useState } from "react";
 
-const UserManager = ({ users, addUser, deleteUser, updateUser }) => {
-  const [newUsername, setNewUsername] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [editIndex, setEditIndex] = useState(null);
-  const [editUsername, setEditUsername] = useState("");
-  const [editEmail, setEditEmail] = useState("");
+const UserManager = ({ users, addUser, deleteUser }) => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleAddUser = () => {
-    if (newUsername.trim() && newEmail.trim()) {
-      addUser(newUsername.trim(), newEmail.trim());
-      setNewUsername("");
-      setNewEmail("");
-    }
-  };
-
-  const handleEditUser = (index, user) => {
-    setEditIndex(index);
-    setEditUsername(user.username);
-    setEditEmail(user.email);
-  };
-
-  const handleSaveUser = () => {
-    if (editUsername.trim() && editEmail.trim()) {
-      updateUser(editIndex, {
-        username: editUsername.trim(),
-        email: editEmail.trim(),
-      });
-      setEditIndex(null);
-      setEditUsername("");
-      setEditEmail("");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (username && email && password) {
+      addUser(username, email, password);
+      setUsername("");
+      setEmail("");
+      setPassword("");
     }
   };
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      <div className="flex items-center space-x-4">
-        <input
-          type="text"
-          value={newUsername}
-          onChange={(e) => setNewUsername(e.target.value)}
-          placeholder="Enter username"
-          className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        />
-        <input
-          type="email"
-          value={newEmail}
-          onChange={(e) => setNewEmail(e.target.value)}
-          placeholder="Enter email"
-          className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        />
-        <button
-          onClick={handleAddUser}
-          className="text-white bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary/70 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary/80"
-        >
-          Add&nbsp;User
-        </button>
-      </div>
-      <ul className="space-y-2">
-        {users.map((user, index) => (
-          <li
-            key={index}
-            className="flex items-center justify-between bg-gray-100 p-3 rounded-lg dark:bg-gray-700"
+    <div>
+      <h2 className="text-xl font-bold mb-4">Manage Users</h2>
+      <form onSubmit={handleSubmit} className="mb-6">
+        <div className="mb-4">
+          <label
+            htmlFor="username"
+            className="block text-sm font-medium text-gray-700"
           >
-            {editIndex === index ? (
-              <div className="flex space-x-4">
-                <input
-                  type="text"
-                  value={editUsername}
-                  onChange={(e) => setEditUsername(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                />
-                <input
-                  type="email"
-                  value={editEmail}
-                  onChange={(e) => setEditEmail(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                />
-              </div>
-            ) : (
-              <span>
-                {user.username} - {user.email}
-              </span>
-            )}
-            <div className="space-x-2 flex ml-2">
-              {editIndex === index ? (
-                <button
-                  onClick={handleSaveUser}
-                  className="text-white bg-green-500 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-3 py-1.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                >
-                  Save
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleEditUser(index, user)}
-                  className="text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-1.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                >
-                  Edit
-                </button>
-              )}
-              <button
-                onClick={() => deleteUser(index)}
-                className="text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-1.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-              >
-                Delete
-              </button>
-            </div>
+            Username
+          </label>
+          <input
+            type="text"
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          />
+        </div>
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-600 text-white rounded-md"
+        >
+          Add User
+        </button>
+      </form>
+      <ul>
+        {users.map((user, index) => (
+          <li key={index} className="mb-2 flex justify-between items-center">
+            <span>
+              {user.username} - {user.email}
+            </span>
+            <button
+              onClick={() => deleteUser(index)}
+              className="px-2 py-1 bg-red-600 text-white rounded-md"
+            >
+              Delete
+            </button>
           </li>
         ))}
       </ul>

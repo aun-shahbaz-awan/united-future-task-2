@@ -1,27 +1,26 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import UserManager from "./UserManager";
 
 const AdminDashboard = React.memo(() => {
-  const { user, logout } = useAuth();
-  const [users, setUsers] = useState([]);
+  const { user, logout, users, addUser } = useAuth();
+  const [userList, setUserList] = useState(users);
 
-  const addUser = useCallback((username, email) => {
-    setUsers((prevUsers) => [...prevUsers, { username, email }]);
-  }, []);
+  const handleAddUser = useCallback(
+    (username, email, password) => {
+      addUser(username, email, password);
+      setUserList([...userList, { username, email, password, role: "user" }]);
+    },
+    [addUser, userList]
+  );
 
-  const deleteUser = useCallback((index) => {
-    setUsers((prevUsers) => prevUsers.filter((_, i) => i !== index));
-  }, []);
-
-  const updateUser = useCallback((index, updatedUser) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user, i) => (i === index ? updatedUser : user))
-    );
-  }, []);
-
-  const totalUsers = useMemo(() => users.length, [users]);
+  const handleDeleteUser = useCallback(
+    (index) => {
+      setUserList(userList.filter((_, i) => i !== index));
+    },
+    [userList]
+  );
 
   if (!user || user.role !== "admin") {
     return <Navigate to="/" />;
@@ -34,34 +33,21 @@ const AdminDashboard = React.memo(() => {
           <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
             Admin Dashboard
           </h1>
-          <p className="text-gray-900 dark:text-white">
-            Welcome, {user.username}
-          </p>
         </div>
         <div>
           <button
             onClick={logout}
-            className="w-full text-white bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary/70 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary/80"
+            className="text-white bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary/70 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary/80"
           >
             Logout
           </button>
         </div>
       </div>
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
-        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-xl xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <p className="text-gray-500 dark:text-gray-400">
-              Total users: {totalUsers}
-            </p>
-            <UserManager
-              users={users}
-              addUser={addUser}
-              deleteUser={deleteUser}
-              updateUser={updateUser}
-            />
-          </div>
-        </div>
-      </div>
+      <UserManager
+        users={userList}
+        addUser={handleAddUser}
+        deleteUser={handleDeleteUser}
+      />
     </section>
   );
 });
